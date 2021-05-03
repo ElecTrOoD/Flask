@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Articles list{% endblock %}
+
+{% block body %}
+    <h1>Articles:</h1>
+    <ul class="list-group-horizontal">
+        {% for article in articles_list %}
+            <li><a href="{{ url_for('article.get_article', pk=article['id']) }}">{{ article['title'] }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
