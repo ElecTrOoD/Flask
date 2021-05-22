@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('main.welcome') }}">
+        <a class="navbar-brand" href="{{ url_for('main.main_page') }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 245 260" fill="none"
                  class="svg-icon icon-logo">
                 <path d="M205.548 259.5H39.2478C27.0478 259.5 17.0478 249.5 17.0478 237.3V109.2H13.3478C7.54775 109.2 2.64775 105.7 0.747752 100.2C-1.15225 94.7 0.647752 88.9 5.24775 85.4L109.048 5.2C116.948 -0.9 127.848 -0.9 135.748 5.2L239.548 85.4C244.148 88.9 245.848 94.8 244.048 100.2C242.248 105.6 237.248 109.2 231.448 109.2H227.748V237.4C227.648 249.6 217.748 259.5 205.548 259.5ZM122.348 9.6C119.548 9.6 116.848 10.5 114.548 12.3L10.7478 92.5C8.44775 94.2 9.04775 96.6 9.34775 97.3C9.64775 98 10.5478 100.2 13.4478 100.2H26.1478V237.4C26.1478 244.7 32.0478 250.6 39.3478 250.6H205.548C212.848 250.6 218.748 244.7 218.748 237.4V100.2H231.448C234.348 100.2 235.248 98 235.548 97.3C235.848 96.6 236.348 94.3 234.148 92.5L130.248 12.3C127.948 10.5 125.148 9.6 122.348 9.6Z"
@@ -17,8 +17,14 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                    <a class="nav-link {{ 'active' if users_list or username}}" href="{{ url_for('user.user_list') }}">Users</a>
-                    <a class="nav-link {{ 'active' if articles_list or article }}" href="{{ url_for('article.article_list') }}">Articles</a>
+                <a class="nav-link {{ 'active' if users or user }}"
+                   href="{{ url_for('user.user_list') }}">Users</a>
+                <a class="nav-link {{ 'active' if articles_list or article }}"
+                   href="{{ url_for('article.article_list') }}">Articles</a>
+                {% if current_user.is_authenticated %}
+                    <a class="nav-link"
+                       href="{{ url_for('auth.logout') }}">Logout</a>
+                {% endif %}
             </div>
         </div>
     </div>

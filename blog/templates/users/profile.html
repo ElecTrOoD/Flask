@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}User{% endblock %}
+
+{% block body %}
+    <h1 class="display-1 text-center">{{ user.username }}</h1>
+    <h1 class="display-1 text-center">{{ user.email }}</h1>
+    <ul class="list-group list-group-flush text-center">
+        {% for article in articles %}
+            <li class="list-group-item"><a
+                    href="{{ url_for('article.get_article', pk=article.id) }}">{{ article.title }}</a></li>
+        {% endfor %}
+    </ul>
+    {% if (current_user.is_staff and current_user.id != user.id) or (not current_user.is_staff and current_user.id == user.id) %}
+        <div class="position-relative mt-5">
+            <a class="position-absolute top-0 end-0" href="{{ url_for('user.delete_user', pk=user.id) }}">
+                <button class="btn btn-primary mb-3">Delete user</button>
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
