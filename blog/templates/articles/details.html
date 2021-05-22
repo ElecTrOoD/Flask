@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Article{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">{{ article.title }}</h1>
+    <p>{{ article.text }}</p>
+    <p>Author: <a href="{{ url_for('user.profile', pk=article.author) }}">{{ username }}</a>
+    </p>
+    {% if current_user.id == article.author or current_user.is_staff %}
+        <div class="position-relative mt-5">
+            <a class="position-absolute top-0 end-0" href="{{ url_for('article.delete', pk=article.id) }}">
+                <button class="btn btn-primary mb-3">Delete article</button>
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
