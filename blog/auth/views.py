@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import logout_user, login_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from blog.extensions import db
+from blog.extensions import db, validate_data
 from blog.models import User
 
 auth = Blueprint('auth', __name__, static_folder='../static')
@@ -46,6 +46,9 @@ def register_post():
     name = request.form.get('name')
     email = request.form.get('email')
     password = request.form.get('password')
+    if not validate_data(name, email, password):
+        flash('Check input data')
+        return redirect(url_for('.register'))
 
     from blog.models import User
 

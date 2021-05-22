@@ -14,7 +14,7 @@ def init_db():
 @click.command('create-users')
 def create_users():
     from blog.models import User
-    from random_data import get_random_user, users_count
+    from extensions import get_random_user, users_count
     from wsgi import app
 
     with app.app_context():
@@ -37,7 +37,7 @@ def create_users():
 @click.command('create-articles')
 def create_articles():
     from blog.models import Article
-    from random_data import get_random_article, article_count
+    from extensions import get_random_article, article_count
     from wsgi import app
 
     with app.app_context():
