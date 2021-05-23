@@ -1,0 +1,29 @@
+version: '3.5'
+
+services:
+  app:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    environment:
+      DATABASE_URL: postgresql://user:password@database:5432/blog
+      SECRET_KEY: h+xcx-c9jx!kx6ch527hv5r0&52!d+si0v(99ob)+2z9ohofdc
+    ports:
+      - 5000:5000
+    depends_on:
+      - database
+
+  database:
+    image: postgres:12.7-alpine
+    environment:
+      POSTGRES_DB: blog
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+
+volumes:
+  pgdata:
