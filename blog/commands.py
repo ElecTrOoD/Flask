@@ -1,6 +1,5 @@
 import click
 from werkzeug.security import generate_password_hash
-
 from blog.extensions import db
 
 
@@ -14,17 +13,10 @@ def init_db():
 @click.command('create-users')
 def create_users():
     from blog.models import User
-    from extensions import get_random_user, users_count
+    from blog.extensions import get_random_user, users_count
     from wsgi import app
 
     with app.app_context():
-        db.session.add(
-            User(username='admin',
-                 email=f'admin@admin.com',
-                 password=generate_password_hash(f'admin'),
-                 is_staff=True))
-        db.session.commit()
-
         for i in range(1, users_count + 1):
             data_1 = get_random_user()
             db.session.add(
@@ -37,8 +29,8 @@ def create_users():
 @click.command('create-articles')
 def create_articles():
     from blog.models import Article
-    from extensions import get_random_article, article_count
     from wsgi import app
+    from blog.extensions import article_count, get_random_article
 
     with app.app_context():
         for i in range(1, article_count + 1):

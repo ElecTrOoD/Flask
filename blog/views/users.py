@@ -36,6 +36,6 @@ def profile(pk: int):
 @user.route('/delete_user/<int:pk>')
 @login_required
 def delete_user(pk: int):
-    deleted_user = User.query.filter_by(id=pk).delete()
+    User.query.filter_by(id=pk).delete()
     db.session.commit()
     return redirect(url_for('user.user_list'))

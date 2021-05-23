@@ -3,11 +3,13 @@ from random import choice, randint
 from string import digits, punctuation
 
 from flask_login import LoginManager
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from lorem_text import lorem
 
 login_manager = LoginManager()
 db = SQLAlchemy()
+migrate = Migrate()
 
 NAMES = ['Mike', 'Alice', 'John', 'Kevin', 'Andrew', 'Douglas', 'Gordon', 'Brad', 'Ethan', 'Jacob']
 SURNAMES = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Wright', 'Baker']

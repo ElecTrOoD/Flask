@@ -30,10 +30,11 @@
                 </div>
                 <div class="col-auto">
                     <button type="submit" class="btn btn-primary mb-3">Login</button>
-
                 </div>
             </form>
-            <a href="{{ url_for('auth.register') }}"><button class="btn btn-primary mb-3">Sign up</button></a>
+            <a href="{{ url_for('auth.register') }}">
+                <button class="btn btn-primary mb-3">Sign up</button>
+            </a>
         </div>
     </div>
 {% endblock %}
