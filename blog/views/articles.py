@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from werkzeug.exceptions import NotFound
 
 from blog.extensions import db
+from blog.forms.article import ArticleWriteForm
 from blog.models import Article, User
 
 article = Blueprint('article', __name__, static_folder='../static', url_prefix='/article')
@@ -38,21 +39,20 @@ def get_article(pk: int):
 @article.route('/write', methods=['GET'])
 @login_required
 def new_article():
-    return render_template('articles/write_new.html')
+    form = ArticleWriteForm()
+    return render_template('articles/write_new.html', form=form)
 
 
 @article.route('/write', methods=['POST'])
 @login_required
 def new_article_post():
-    user = current_user.id
-    title = request.form.get('title')
-    text = request.form.get('text')
-
+    form = ArticleWriteForm(request.form)
     db.session.add(
         Article(
-            title=title,
-            text=text,
-            author=user))
+            title=form.title.data,
+            text=form.text.data,
+            author=current_user.id
+        ))
     db.session.commit()
 
     return redirect('/article')
