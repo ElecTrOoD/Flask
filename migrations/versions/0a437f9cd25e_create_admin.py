@@ -3,7 +3,6 @@
 Revision ID: 0a437f9cd25e
 Revises: a3654faef6b4
 Create Date: 2021-05-23 10:22:34.571764
-
 """
 from alembic import op
 
@@ -11,7 +10,7 @@ from alembic import op
 from sqlalchemy import column, String, Integer, table, Boolean
 
 revision = '0a437f9cd25e'
-down_revision = 'a3654faef6b4'
+down_revision = '46e86d0169c8'
 branch_labels = None
 depends_on = None
 

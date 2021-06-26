@@ -13,7 +13,7 @@ def user_list():
     users = User.query.all()
 
     return render_template(
-        'users/user_list.html',
+        'users/list.html',
         users=users,
     )
 
@@ -22,7 +22,7 @@ def user_list():
 @login_required
 def profile(pk: int):
     selected_user = User.query.filter_by(id=pk).one_or_none()
-    user_articles = Article.query.filter_by(author=pk)
+    user_articles = Article.query.filter_by(author_id=selected_user.author.id)
 
     if not selected_user:
         raise NotFound(f"User #{pk} doesn't exist")
