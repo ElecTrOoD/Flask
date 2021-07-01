@@ -22,7 +22,10 @@ def user_list():
 @login_required
 def profile(pk: int):
     selected_user = User.query.filter_by(id=pk).one_or_none()
-    user_articles = Article.query.filter_by(author_id=selected_user.author.id)
+    if selected_user.author:
+        user_articles = Article.query.filter_by(author_id=selected_user.author.id)
+    else:
+        user_articles = []
 
     if not selected_user:
         raise NotFound(f"User #{pk} doesn't exist")
