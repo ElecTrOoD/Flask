@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
+from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import NotFound
 
 from blog.extensions import db
 from blog.forms.article import CreateArticleForm
-from blog.models import Article, User, Author
+from blog.models import Article, User, Author, Tag
 
 article = Blueprint('article', __name__, static_folder='../static', url_prefix='/article')
 
@@ -19,10 +20,21 @@ def article_list():
     )
 
 
+@article.route('/tag/<int:tag_id>', methods=['GET'])
+def article_list_by_tag(tag_id: int):
+    selected_tag = Tag.query.filter_by(id=tag_id).options(joinedload(Tag.articles)).one_or_none()
+    articles = selected_tag.articles
+
+    return render_template(
+        'articles/list.html',
+        articles_list=articles,
+    )
+
+
 @article.route('/<int:article_id>')
 @login_required
 def article_detail(article_id: int):
-    selected_article = Article.query.filter_by(id=article_id).one_or_none()
+    selected_article = Article.query.filter_by(id=article_id).options(joinedload(Article.tags)).one_or_none()
     if not selected_article:
         raise NotFound(f'Article with id {article_id} not found.')
 
@@ -35,6 +47,7 @@ def article_detail(article_id: int):
 @login_required
 def create_article_form():
     form = CreateArticleForm(request.form)
+    form.tags.choices = [(tag.id, tag.name) for tag in Tag.query.order_by('name')]
     return render_template('articles/create.html', form=form)
 
 
@@ -42,13 +55,22 @@ def create_article_form():
 @login_required
 def create_article():
     form = CreateArticleForm(request.form)
+    form.tags.choices = [(tag.id, tag.name) for tag in Tag.query.order_by('name')]
+
     if form.validate_on_submit():
         if current_user.author:
             author = current_user.author
         else:
             author = Author(user_id=current_user.id)
             db.session.add(author)
+
         _article = Article(title=form.title.data.strip(), text=form.text.data, author=author)
+
+        if form.tags.data:
+            selected_tags = Tag.query.filter(Tag.id.in_(form.tags.data))
+            for tag in selected_tags:
+                _article.tags.append(tag)
+
         db.session.add(_article)
 
         db.session.commit()
@@ -61,6 +83,7 @@ def create_article():
 @login_required
 def delete(pk: int):
     selected_article = Article.query.filter_by(id=pk).one_or_none()
+    selected_article.tags.clear()
     if Article.query.filter_by(author_id=selected_article.author.id).count() == 1:
         Author.query.filter_by(id=selected_article.author_id).delete()
     Article.query.filter_by(id=pk).delete()

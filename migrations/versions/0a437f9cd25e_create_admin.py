@@ -10,7 +10,7 @@ from alembic import op
 from sqlalchemy import column, String, Integer, table, Boolean
 
 revision = '0a437f9cd25e'
-down_revision = '46e86d0169c8'
+down_revision = '96736f1c83df'
 branch_labels = None
 depends_on = None
 

@@ -1,10 +1,18 @@
 from datetime import datetime
 
 from flask_login import UserMixin
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Table
 from sqlalchemy.orm import relationship
 
 from blog.app import db
+
+
+article_tag_association_table = Table(
+    'article_tag_association',
+    db.metadata,
+    db.Column('article_id', db.Integer, db.ForeignKey('articles.id'), nullable=False),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), nullable=False)
+)
 
 
 class User(db.Model, UserMixin):
@@ -35,7 +43,7 @@ class Author(db.Model):
     user_id = db.Column(db.Integer, ForeignKey('users.id'), nullable=False)
 
     user = relationship('User', back_populates='author')
-    article = relationship('Article', back_populates='author')
+    articles = relationship('Article', back_populates='author')
 
 
 class Article(db.Model):
@@ -48,9 +56,19 @@ class Article(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    author = relationship('Author', back_populates='article')
+    author = relationship('Author', back_populates='articles')
+    tags = relationship('Tag', secondary=article_tag_association_table, back_populates='articles')
 
     def __init__(self, title, text, author):
         self.title = title
         self.text = text
         self.author = author
+
+
+class Tag(db.Model):
+    __tablename__ = 'tags'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+
+    articles = relationship('Article', secondary=article_tag_association_table, back_populates='tags')

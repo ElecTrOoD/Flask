@@ -18,7 +18,7 @@
             {% endwith %}
             <form class="row g-3 mt-5" method="post">
                 {{ form.csrf_token }}
-                {% for field in ['title', 'text'] %}
+                {% for field in ['title', 'text', 'tags'] %}
                     {{ render_field(form[field]) }}
                 {% endfor %}
                 {{ form.submit(class='btn btn-primary mb-3') }}
