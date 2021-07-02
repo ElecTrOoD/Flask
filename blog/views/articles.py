@@ -1,66 +1,68 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from werkzeug.exceptions import NotFound
 
 from blog.extensions import db
-from blog.forms.article import ArticleWriteForm
-from blog.models import Article, User
+from blog.forms.article import CreateArticleForm
+from blog.models import Article, User, Author
 
 article = Blueprint('article', __name__, static_folder='../static', url_prefix='/article')
 
 
-@article.route('/')
+@article.route('/', methods=['GET'])
 def article_list():
     articles = Article.query.all()
 
     return render_template(
-        'articles/articles_list.html',
+        'articles/list.html',
         articles_list=articles,
     )
 
 
-@article.route('/<int:pk>')
+@article.route('/<int:article_id>')
 @login_required
-def get_article(pk: int):
-    selected_article = Article.query.filter_by(id=pk).one_or_none()
+def article_detail(article_id: int):
+    selected_article = Article.query.filter_by(id=article_id).one_or_none()
     if not selected_article:
-        raise NotFound(f'Article with id {pk} not found.')
-
-    author = User.query.filter_by(id=selected_article.author).one_or_none()
-    if not author:
-        raise NotFound(f'User with id {selected_article.author} not found.')
+        raise NotFound(f'Article with id {article_id} not found.')
 
     return render_template(
         'articles/details.html',
-        article=selected_article,
-        username=author.username)
+        article=selected_article)
 
 
 @article.route('/write', methods=['GET'])
 @login_required
-def new_article():
-    form = ArticleWriteForm()
-    return render_template('articles/write_new.html', form=form)
+def create_article_form():
+    form = CreateArticleForm(request.form)
+    return render_template('articles/create.html', form=form)
 
 
 @article.route('/write', methods=['POST'])
 @login_required
-def new_article_post():
-    form = ArticleWriteForm(request.form)
-    db.session.add(
-        Article(
-            title=form.title.data,
-            text=form.text.data,
-            author=current_user.id
-        ))
-    db.session.commit()
+def create_article():
+    form = CreateArticleForm(request.form)
+    if form.validate_on_submit():
+        if current_user.author:
+            author = current_user.author
+        else:
+            author = Author(user_id=current_user.id)
+            db.session.add(author)
+        _article = Article(title=form.title.data.strip(), text=form.text.data, author=author)
+        db.session.add(_article)
 
-    return redirect('/article')
+        db.session.commit()
+        return redirect(url_for('article.article_detail', article_id=_article.id))
+
+    return render_template('articles/create.html', form=form)
 
 
 @article.route('/delete/<int:pk>')
 @login_required
 def delete(pk: int):
+    selected_article = Article.query.filter_by(id=pk).one_or_none()
+    if Article.query.filter_by(author_id=selected_article.author.id).count() == 1:
+        Author.query.filter_by(id=selected_article.author_id).delete()
     Article.query.filter_by(id=pk).delete()
     db.session.commit()
 

@@ -1,4 +1,8 @@
+from datetime import datetime
+
 from flask_login import UserMixin
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
 
 from blog.app import db
 
@@ -14,6 +18,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(255))
     is_staff = db.Column(db.Boolean, nullable=False, default=False)
 
+    author = relationship('Author', uselist=False, back_populates='user')
+
     def __init__(self, username, first_name, last_name, email, password):
         self.username = username
         self.first_name = first_name
@@ -22,13 +28,27 @@ class User(db.Model, UserMixin):
         self.password = password
 
 
+class Author(db.Model):
+    __tablename__ = 'authors'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, ForeignKey('users.id'), nullable=False)
+
+    user = relationship('User', back_populates='author')
+    article = relationship('Article', back_populates='author')
+
+
 class Article(db.Model):
     __tablename__ = 'articles'
 
     id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, ForeignKey('authors.id'), nullable=False)
     title = db.Column(db.String(255))
-    text = db.Column(db.String())
-    author = db.Column(db.Integer)
+    text = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    author = relationship('Author', back_populates='article')
 
     def __init__(self, title, text, author):
         self.title = title

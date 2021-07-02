@@ -17,9 +17,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-link {{ 'active' if users or user }}"
+                <a class="nav-link {{ 'active' if request.blueprint == 'user' }}"
                    href="{{ url_for('user.user_list') }}">Users</a>
-                <a class="nav-link {{ 'active' if articles_list or article }}"
+                <a class="nav-link {{ 'active' if request.blueprint == 'author' }}"
+                   href="{{ url_for('author.author_list') }}">Authors</a>
+                <a class="nav-link {{ 'active' if request.blueprint == 'article' }}"
                    href="{{ url_for('article.article_list') }}">Articles</a>
                 {% if current_user.is_authenticated %}
                     <a class="nav-link"
