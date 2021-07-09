@@ -6,7 +6,6 @@ from sqlalchemy.orm import relationship
 
 from blog.app import db
 
-
 article_tag_association_table = Table(
     'article_tag_association',
     db.metadata,
@@ -35,6 +34,9 @@ class User(db.Model, UserMixin):
         self.email = email
         self.password = password
 
+    def __repr__(self):
+        return self.username
+
 
 class Author(db.Model):
     __tablename__ = 'authors'
@@ -44,6 +46,9 @@ class Author(db.Model):
 
     user = relationship('User', back_populates='author')
     articles = relationship('Article', back_populates='author')
+
+    def __repr__(self):
+        return self.user.username
 
 
 class Article(db.Model):
@@ -64,6 +69,9 @@ class Article(db.Model):
         self.text = text
         self.author = author
 
+    def __repr__(self):
+        return self.title
+
 
 class Tag(db.Model):
     __tablename__ = 'tags'
@@ -72,3 +80,6 @@ class Tag(db.Model):
     name = db.Column(db.String(255), nullable=False)
 
     articles = relationship('Article', secondary=article_tag_association_table, back_populates='tags')
+
+    def __repr__(self):
+        return self.name
