@@ -5,7 +5,7 @@ from werkzeug.exceptions import NotFound
 
 from blog.extensions import db
 from blog.forms.article import CreateArticleForm
-from blog.models import Article, User, Author, Tag
+from blog.models import Article, Author, Tag
 
 article = Blueprint('article', __name__, static_folder='../static', url_prefix='/article')
 

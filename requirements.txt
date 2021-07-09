@@ -10,3 +10,4 @@ flask_migrate==3.0.0
 WTForms=2.3.3
 Flask-WTF==0.15.1
 email-validator=1.1.2
+Flask-Admin==1.5.8
