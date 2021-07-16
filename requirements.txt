@@ -11,3 +11,7 @@ WTForms=2.3.3
 Flask-WTF==0.15.1
 email-validator=1.1.2
 Flask-Admin==1.5.8
+Flask-COMBO-JSONAPI==1.0.7
+ComboJSONAPI==1.1.1
+apispec==4.7.1
+PyYAML==5.4.1
