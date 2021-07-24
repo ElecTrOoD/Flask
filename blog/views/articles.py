@@ -1,3 +1,6 @@
+from typing import Dict
+
+import requests as requests
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from sqlalchemy.orm import joinedload
@@ -14,6 +17,15 @@ article = Blueprint('article', __name__, static_folder='../static', url_prefix='
 def article_list():
     articles = Article.query.all()
 
+    return render_template(
+        'articles/list.html',
+        articles_list=articles,
+    )
+
+
+@article.route('/list_rpc', methods=['GET'])
+def article_list_rpc():
+    articles: Dict = requests.get('http://127.0.0.1:5000/api/articles/event_get_list/').json()['data']
     return render_template(
         'articles/list.html',
         articles_list=articles,
